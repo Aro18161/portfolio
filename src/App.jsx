@@ -12,7 +12,7 @@ const displayName = '\uC2E0\uB3D9\uBBFC';
 
 const profileLinks = [
   {
-    href: 'https://github.com/',
+    href: 'https://github.com/Aro18161',
     label: 'GitHub',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="11" height="11" fill="currentColor" aria-hidden="true">
@@ -21,7 +21,7 @@ const profileLinks = [
     ),
   },
   {
-    href: 'https://linkedin.com/',
+    href: 'https://www.linkedin.com/in/%EB%8F%99%EB%AF%BC-%EC%8B%A0-3b25b4317/',
     label: 'LinkedIn',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="11" height="11" fill="currentColor" aria-hidden="true">
