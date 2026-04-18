@@ -8,18 +8,34 @@
   overflow-x: hidden;
 }
 
-/* ── 산 스트립 ────────────────────────────────────────────── */
+/* ── 산 스트립 래퍼 ───────────────────────────────────────── */
+.mh-strip-wrap {
+  position: relative;
+  flex-shrink: 0;
+  height: 190px;
+}
+
 .mh-strip {
   display: block;
   width: 100%;
-  height: 190px;
-  flex-shrink: 0;
-  margin-bottom: -24px; /* 하단 페이드와 프로필 오버랩 */
+  height: 100%;
+}
+
+/* 캔버스 위에 CSS 페이드 오버레이 — 겹침 없이 자연스러운 연결 */
+.mh-strip-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: linear-gradient(to bottom, transparent, #080808);
+  pointer-events: none;
 }
 
 /* ── 프로필 ───────────────────────────────────────────────── */
 .mh-profile {
-  padding: 0 28px 32px;
+  padding: 20px 28px 32px;
   flex-shrink: 0;
 }
 

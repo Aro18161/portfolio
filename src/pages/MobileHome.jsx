@@ -110,7 +110,9 @@ export default function MobileHome() {
   return (
     <div className="mh-root">
       {/* 산 스트립 */}
-      <canvas ref={canvasRef} className="mh-strip" aria-hidden="true" />
+      <div className="mh-strip-wrap">
+        <canvas ref={canvasRef} className="mh-strip" aria-hidden="true" />
+      </div>
 
       {/* 프로필 */}
       <section className="mh-profile">
