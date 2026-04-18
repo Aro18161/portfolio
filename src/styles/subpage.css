@@ -489,13 +489,50 @@
 
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .subpage-sidebar { width: 200px; }
-  .subpage-header { padding: 20px 24px; }
-  .subpage-body { padding: 32px 24px 60px; }
+  .subpage-sidebar { width: 180px; }
+  .subpage-header  { padding: 18px 24px; }
+  .subpage-body    { padding: 28px 24px 60px; }
+
+  .project-item,
+  .blog-item { gap: 16px; }
+
+  .item-title { font-size: 14px; }
 }
 
 @media (max-width: 560px) {
   .subpage-sidebar { display: none; }
-  .subpage-header { padding: 16px 20px; }
-  .subpage-body { padding: 24px 20px 60px; }
+  .subpage-header  { padding: 14px 20px; gap: 14px; }
+  .subpage-body    { padding: 24px 20px 80px; }
+
+  /* 페이지 제목 */
+  .page-title { font-size: clamp(17px, 5vw, 22px); margin-bottom: 28px; }
+
+  /* 리스트 아이템 — 터치 타겟 확보 */
+  .project-item  { padding: 20px 0; gap: 14px; }
+  .blog-item     { padding: 18px 0; gap: 12px; }
+  .company-item  { padding: 28px 0; }
+
+  .item-title    { font-size: 14px; }
+  .item-year     { font-size: 9px; }
+  .blog-date     { width: 64px; font-size: 9px; }
+
+  /* 태그 간격 */
+  .item-tags { gap: 4px; }
+  .tag { font-size: 8px; padding: 2px 6px; }
+
+  /* 회사 */
+  .company-name   { font-size: 14px; }
+  .company-role   { font-size: 11px; flex-wrap: wrap; }
+  .task-item      { font-size: 11px; }
+
+  /* 상세 뷰 */
+  .detail-thumbnail { aspect-ratio: 16 / 9; }
+
+  .markdown-body { font-size: 12px; line-height: 1.85; }
+  .markdown-body h1 { font-size: clamp(16px, 4.5vw, 20px); }
+  .markdown-body h2 { font-size: 12px; }
+
+  /* 헤더 back 버튼 */
+  .back-btn { font-size: 10px; }
+  .subpage-breadcrumb { font-size: 9px; }
 }

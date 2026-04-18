@@ -1,0 +1,143 @@
+/* ── Mobile Home ─────────────────────────────────────────── */
+.mh-root {
+  min-height: 100vh;
+  background: #080808;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── 산 스트립 ────────────────────────────────────────────── */
+.mh-strip {
+  display: block;
+  width: 100%;
+  height: 190px;
+  flex-shrink: 0;
+  margin-bottom: -24px; /* 하단 페이드와 프로필 오버랩 */
+}
+
+/* ── 프로필 ───────────────────────────────────────────────── */
+.mh-profile {
+  padding: 0 28px 32px;
+  flex-shrink: 0;
+}
+
+.mh-name {
+  display: block;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1;
+  text-indent: 0.16em;
+}
+
+.mh-sub {
+  display: block;
+  margin-top: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 8px;
+  letter-spacing: 0.32em;
+  text-indent: 0.32em;
+  color: rgba(255, 255, 255, 0.25);
+  text-transform: uppercase;
+}
+
+.mh-divider {
+  width: 24px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 16px 0;
+}
+
+.mh-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mh-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.32);
+  transition: color 0.2s;
+}
+
+.mh-link:active { color: rgba(255, 255, 255, 0.75); }
+
+.mh-dot {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+/* ── 섹션 ─────────────────────────────────────────────────── */
+.mh-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 24px 0 8px;
+  flex-shrink: 0;
+}
+
+.mh-section-label {
+  padding: 0 28px;
+  margin-bottom: 4px;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.mh-label-eng {
+  font-family: 'Space Mono', monospace;
+}
+
+.mh-label-design {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+/* ── 개별 항목 ────────────────────────────────────────────── */
+.mh-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 28px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.12s, color 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mh-item:last-child {
+  border-bottom: none;
+}
+
+.mh-item:active {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.mh-item svg {
+  opacity: 0.3;
+  flex-shrink: 0;
+  transition: opacity 0.12s, transform 0.12s;
+}
+
+.mh-item:active svg {
+  opacity: 0.7;
+  transform: translateX(3px);
+}

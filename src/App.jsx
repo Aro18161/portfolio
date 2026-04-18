@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import MobileHome from './pages/MobileHome';
+import './styles/mobile-home.css';
 
 const ROUTE_MAP = {
   left:  { Projects: '/engineering/projects', Company: '/engineering/company', Blog: '/engineering/blog' },
@@ -95,6 +97,16 @@ export default function App() {
   const cursorRef = useRef(null);
   const nameLabelRef = useRef(null);
   const [cursorBig, setCursorBig] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia('(max-width: 560px)').matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 560px)');
+    const onChange = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -109,6 +121,8 @@ export default function App() {
     if (!ctx) {
       return undefined;
     }
+
+    const isMobile = window.matchMedia('(pointer: coarse)').matches;
 
     const grayscale = Array.from({ length: 256 }, (_, index) => `rgb(${index},${index},${index})`);
     const pixelSize = 5;
@@ -214,20 +228,22 @@ export default function App() {
         }
       }
 
-      const scatterCount = 200 + Math.floor(width / 6);
-      for (let index = 0; index < scatterCount; index += 1) {
-        const x = Math.random() * width;
-        const y = Math.random() * height * 0.55;
-        pixels.push({
-          ox: x,
-          oy: y,
-          x,
-          y,
-          vx: 0,
-          vy: 0,
-          b: Math.random() * 0.06 + 0.01,
-          sz: Math.random() < 0.65 ? 1 : 2,
-        });
+      if (!isMobile) {
+        const scatterCount = 200 + Math.floor(width / 6);
+        for (let index = 0; index < scatterCount; index += 1) {
+          const x = Math.random() * width;
+          const y = Math.random() * height * 0.55;
+          pixels.push({
+            ox: x,
+            oy: y,
+            x,
+            y,
+            vx: 0,
+            vy: 0,
+            b: Math.random() * 0.06 + 0.01,
+            sz: Math.random() < 0.65 ? 1 : 2,
+          });
+        }
       }
     };
 
@@ -270,73 +286,81 @@ export default function App() {
       ctx.fillRect(0, 0, width, height);
       ctx.restore();
 
-      const radius = 145;
-      const radiusSquared = radius * radius;
+      if (!isMobile) {
+        const radius = 145;
+        const radiusSquared = radius * radius;
 
-      for (const pixel of pixels) {
-        const dx = pixel.x - mouse.x;
-        const dy = pixel.y - mouse.y;
-        const distanceSquared = dx * dx + dy * dy;
+        for (const pixel of pixels) {
+          const dx = pixel.x - mouse.x;
+          const dy = pixel.y - mouse.y;
+          const distanceSquared = dx * dx + dy * dy;
 
-        if (distanceSquared < radiusSquared && distanceSquared > 0.01) {
-          const distance = Math.sqrt(distanceSquared);
-          const normalized = 1 - distance / radius;
-          const force = normalized * normalized * 6;
-          pixel.vx += (dx / distance) * force;
-          pixel.vy += (dy / distance) * force;
+          if (distanceSquared < radiusSquared && distanceSquared > 0.01) {
+            const distance = Math.sqrt(distanceSquared);
+            const normalized = 1 - distance / radius;
+            const force = normalized * normalized * 6;
+            pixel.vx += (dx / distance) * force;
+            pixel.vy += (dy / distance) * force;
+          }
+
+          pixel.vx += (pixel.ox - pixel.x) * 0.18;
+          pixel.vy += (pixel.oy - pixel.y) * 0.18;
+          pixel.vx *= 0.72;
+          pixel.vy *= 0.72;
+
+          pixel.x += pixel.vx;
+          pixel.y += pixel.vy;
+
+          if (
+            Math.abs(pixel.vx) < 0.08 &&
+            Math.abs(pixel.vy) < 0.08 &&
+            Math.abs(pixel.x - pixel.ox) < 0.5 &&
+            Math.abs(pixel.y - pixel.oy) < 0.5
+          ) {
+            pixel.vx = 0;
+            pixel.vy = 0;
+            pixel.x = pixel.ox;
+            pixel.y = pixel.oy;
+          }
+
+          ctx.fillStyle = grayscale[Math.round(pixel.b * 255)];
+          ctx.fillRect(pixel.x | 0, pixel.y | 0, pixel.sz, pixel.sz);
         }
 
-        pixel.vx += (pixel.ox - pixel.x) * 0.18;
-        pixel.vy += (pixel.oy - pixel.y) * 0.18;
-        pixel.vx *= 0.72;
-        pixel.vy *= 0.72;
-
-        pixel.x += pixel.vx;
-        pixel.y += pixel.vy;
-
-        if (
-          Math.abs(pixel.vx) < 0.08 &&
-          Math.abs(pixel.vy) < 0.08 &&
-          Math.abs(pixel.x - pixel.ox) < 0.5 &&
-          Math.abs(pixel.y - pixel.oy) < 0.5
-        ) {
-          pixel.vx = 0;
-          pixel.vy = 0;
-          pixel.x = pixel.ox;
-          pixel.y = pixel.oy;
+        glitchTimer -= 1;
+        if (glitchTimer <= 0) {
+          glitchTimer = (30 + Math.random() * 90) | 0;
+          if (Math.random() < 0.65) {
+            activeGlitch = {
+              y: (height * (0.35 + Math.random() * 0.5)) | 0,
+              h: Math.random() < 0.25 ? 2 : 1,
+              life: 1 + ((Math.random() * 3) | 0),
+              left: Math.random() < 0.5,
+              a: 0.07 + Math.random() * 0.06,
+            };
+          }
         }
 
-        ctx.fillStyle = grayscale[Math.round(pixel.b * 255)];
-        ctx.fillRect(pixel.x | 0, pixel.y | 0, pixel.sz, pixel.sz);
+        if (activeGlitch) {
+          ctx.save();
+          ctx.globalAlpha = activeGlitch.a;
+          ctx.fillStyle = activeGlitch.left ? '#ffffff' : '#0a0a0a';
+          ctx.fillRect(activeGlitch.left ? 0 : width / 2, activeGlitch.y, width / 2, activeGlitch.h);
+          ctx.restore();
+          activeGlitch.life -= 1;
+          if (activeGlitch.life <= 0) {
+            activeGlitch = null;
+          }
+        }
+
+        frameId = window.requestAnimationFrame(drawFrame);
+      } else {
+        /* mobile — static: draw pixels at their origin positions */
+        for (const pixel of pixels) {
+          ctx.fillStyle = grayscale[Math.round(pixel.b * 255)];
+          ctx.fillRect(pixel.ox | 0, pixel.oy | 0, pixel.sz, pixel.sz);
+        }
       }
-
-      glitchTimer -= 1;
-      if (glitchTimer <= 0) {
-        glitchTimer = (30 + Math.random() * 90) | 0;
-        if (Math.random() < 0.65) {
-          activeGlitch = {
-            y: (height * (0.35 + Math.random() * 0.5)) | 0,
-            h: Math.random() < 0.25 ? 2 : 1,
-            life: 1 + ((Math.random() * 3) | 0),
-            left: Math.random() < 0.5,
-            a: 0.07 + Math.random() * 0.06,
-          };
-        }
-      }
-
-      if (activeGlitch) {
-        ctx.save();
-        ctx.globalAlpha = activeGlitch.a;
-        ctx.fillStyle = activeGlitch.left ? '#ffffff' : '#0a0a0a';
-        ctx.fillRect(activeGlitch.left ? 0 : width / 2, activeGlitch.y, width / 2, activeGlitch.h);
-        ctx.restore();
-        activeGlitch.life -= 1;
-        if (activeGlitch.life <= 0) {
-          activeGlitch = null;
-        }
-      }
-
-      frameId = window.requestAnimationFrame(drawFrame);
     };
 
     const init = () => {
@@ -358,6 +382,7 @@ export default function App() {
 
     const handleResize = () => {
       init();
+      if (isMobile) drawFrame(); // re-render static frame on resize
     };
 
     const handleMouseMove = (event) => {
@@ -388,18 +413,22 @@ export default function App() {
     };
 
     const startAnimation = () => {
-      if (disposed) {
-        return;
-      }
-
+      if (disposed) return;
       init();
-      drawFrame();
+      if (isMobile) {
+        drawFrame(); // single static frame — no rAF loop
+      } else {
+        drawFrame(); // kicks off rAF loop internally
+      }
     };
 
     window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
-    window.addEventListener('click', handleClick);
+
+    if (!isMobile) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseleave', handleMouseLeave);
+      window.addEventListener('click', handleClick);
+    }
 
     if (document.fonts?.ready) {
       document.fonts.ready.then(startAnimation);
@@ -410,12 +439,16 @@ export default function App() {
     return () => {
       disposed = true;
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
-      window.removeEventListener('click', handleClick);
+      if (!isMobile) {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseleave', handleMouseLeave);
+        window.removeEventListener('click', handleClick);
+      }
       window.cancelAnimationFrame(frameId);
     };
   }, []);
+
+  if (isMobile) return <MobileHome />;
 
   const enlargeCursor = () => setCursorBig(true);
   const shrinkCursor = () => setCursorBig(false);

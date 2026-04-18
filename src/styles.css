@@ -278,6 +278,7 @@ a {
   background: rgba(255, 255, 255, 0.72);
 }
 
+/* ── 900px: 여백 축소 ─────────────────────────────────────── */
 @media (max-width: 900px) {
   .panel-left .panel-title,
   .panel-left .panel-nav,
@@ -296,6 +297,7 @@ a {
   }
 }
 
+/* ── 700px: 소형 태블릿 ───────────────────────────────────── */
 @media (max-width: 700px) {
   .panel-title {
     top: 28px;
@@ -333,12 +335,82 @@ a {
   }
 }
 
-@media (pointer: coarse) {
-  body {
-    cursor: auto;
+/* ── 560px: 모바일 — 패널 상하 분할 ──────────────────────── */
+@media (max-width: 560px) {
+  /* 패널을 상하로 쌓기 */
+  .panel {
+    width: 100%;
+    height: 50%;
+    left: 0;
+    right: 0;
   }
 
-  .cursor {
-    display: none;
+  .panel-left  { top: 0; }
+  .panel-right { top: 50%; }
+
+  /* 제목 위치 */
+  .panel-title { top: 28px; }
+
+  .panel-left .panel-title {
+    left: 28px;
+    right: auto;
   }
+
+  .panel-right .panel-title {
+    right: 28px;
+    left: auto;
+  }
+
+  /* nav: 각 패널 안에서 세로 중앙 */
+  .panel-left .panel-nav {
+    left: 28px;
+    right: auto;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .panel-right .panel-nav {
+    right: 28px;
+    left: auto;
+    align-items: flex-end;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* 터치 타겟 확보 */
+  .panel-nav a {
+    font-size: 15px;
+    padding: 10px 0;
+    letter-spacing: 0.08em;
+  }
+
+  /* 이름 — 하단 패널 오른쪽 아래 */
+  .name-label {
+    top: auto;
+    left: auto;
+    bottom: 24px;
+    right: 28px;
+    transform: none;
+    text-align: right;
+  }
+
+  .name-main {
+    font-size: clamp(20px, 5.5vw, 26px);
+  }
+
+  /* 데코레이션 숨김 */
+  .meta-label  { display: none; }
+  .coords      { display: none; }
+  .page-dots   { display: none; }
+  .cursor      { display: none; }
+}
+
+/* ── 터치 디바이스: 커서 복원 ─────────────────────────────── */
+@media (pointer: coarse) {
+  .portfolio-shell,
+  .portfolio-shell * {
+    cursor: auto !important;
+  }
+
+  .cursor { display: none; }
 }
