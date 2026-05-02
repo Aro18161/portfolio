@@ -4,12 +4,12 @@ import MobileHome from './pages/MobileHome';
 import './styles/mobile-home.css';
 
 const ROUTE_MAP = {
-  left:  { Projects: '/engineering/projects', Company: '/engineering/company', Blog: '/engineering/blog' },
-  right: { Projects: '/design/projects',      Essay:   '/design/essay',        Article: '/design/article' },
+  left:  { Projects: '/engineering/projects', Career: '/engineering/career', Blog: '/engineering/blog' },
+  right: { Projects: '/design/projects',      Idea:    '/design/idea',         Article: '/design/article' },
 };
 
-const engineeringLinks = ['Projects', 'Company', 'Blog'];
-const designLinks = ['Projects', 'Essay', 'Article'];
+const engineeringLinks = ['Projects', 'Career', 'Blog'];
+const designLinks = ['Projects', 'Idea', 'Article'];
 const displayName = '\uC2E0\uB3D9\uBBFC';
 
 const profileLinks = [

@@ -135,7 +135,7 @@ export default function MobileHome() {
         <p className="mh-section-label mh-label-eng">Engineering</p>
         {[
           { label: 'Projects', to: '/engineering/projects' },
-          { label: 'Company',  to: '/engineering/company'  },
+          { label: 'Career',   to: '/engineering/career'   },
           { label: 'Blog',     to: '/engineering/blog'     },
         ].map(({ label, to }) => (
           <Link key={to} to={to} className="mh-item">
@@ -150,7 +150,7 @@ export default function MobileHome() {
         <p className="mh-section-label mh-label-design">Design</p>
         {[
           { label: 'Projects', to: '/design/projects' },
-          { label: 'Essay',    to: '/design/essay'    },
+          { label: 'Idea',     to: '/design/idea'     },
           { label: 'Article',  to: '/design/article'  },
         ].map(({ label, to }) => (
           <Link key={to} to={to} className="mh-item">

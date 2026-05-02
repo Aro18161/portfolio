@@ -15,10 +15,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/engineering/projects" element={<ProjectsPage section="engineering" />} />
-        <Route path="/engineering/company"  element={<CompanyPage />} />
+        <Route path="/engineering/career"  element={<CompanyPage />} />
         <Route path="/engineering/blog"     element={<BlogPage type="blog" />} />
         <Route path="/design/projects"      element={<ProjectsPage section="design" />} />
-        <Route path="/design/essay"         element={<BlogPage type="essay" />} />
+        <Route path="/design/idea"          element={<BlogPage type="essay" />} />
         <Route path="/design/article"       element={<BlogPage type="article" />} />
         <Route path="/admin"               element={<AdminPage />} />
       </Routes>

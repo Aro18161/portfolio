@@ -2,6 +2,7 @@ export const companies = [
   {
     id: 'company-a',
     name: 'Company A',
+    type: 'work',
     role: 'Frontend Engineer',
     period: '2024.03 – Present',
     tasks: [
@@ -15,6 +16,7 @@ export const companies = [
   {
     id: 'company-b',
     name: 'Company B',
+    type: 'work',
     role: 'UI/UX Designer & Frontend Developer',
     period: '2022.07 – 2024.02',
     tasks: [
@@ -28,6 +30,7 @@ export const companies = [
   {
     id: 'company-c',
     name: 'Agency C',
+    type: 'work',
     role: 'Web Developer (Intern → Junior)',
     period: '2021.03 – 2022.06',
     tasks: [

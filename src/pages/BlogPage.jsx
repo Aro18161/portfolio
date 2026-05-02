@@ -6,7 +6,7 @@ import { useContent } from '../hooks/useContent';
 
 const META = {
   blog:    { storeKey: 'blogPosts', label: 'Blog',    section: 'engineering' },
-  essay:   { storeKey: 'essays',    label: 'Essay',   section: 'design' },
+  essay:   { storeKey: 'essays',    label: 'Idea',    section: 'design' },
   article: { storeKey: 'articles',  label: 'Article', section: 'design' },
 };
 

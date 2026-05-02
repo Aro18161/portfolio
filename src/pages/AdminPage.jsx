@@ -12,9 +12,9 @@ const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'portfolio2025';
 const SECTIONS = [
   { key: 'engineeringProjects', label: 'Engineering Projects', group: 'Engineering', type: 'project', nameField: 'title', metaField: 'year' },
   { key: 'blogPosts',           label: 'Blog Posts',           group: 'Engineering', type: 'post',    nameField: 'title', metaField: 'date' },
-  { key: 'companies',           label: 'Company / Experience', group: 'Engineering', type: 'company', nameField: 'name',  metaField: 'period' },
+  { key: 'companies',           label: 'Career',               group: 'Engineering', type: 'company', nameField: 'name',  metaField: 'period' },
   { key: 'designProjects',      label: 'Design Projects',      group: 'Design',      type: 'project', nameField: 'title', metaField: 'year' },
-  { key: 'essays',              label: 'Essays',               group: 'Design',      type: 'post',    nameField: 'title', metaField: 'date' },
+  { key: 'essays',              label: 'Ideas',                group: 'Design',      type: 'post',    nameField: 'title', metaField: 'date' },
   { key: 'articles',            label: 'Articles',             group: 'Design',      type: 'post',    nameField: 'title', metaField: 'date' },
 ];
 
@@ -258,25 +258,33 @@ function CompanyEditor({ item, onSave, onCancel, saving }) {
   const [fields, setFields] = useState(() =>
     item
       ? { ...item, tasksText: (item.tasks || []).join('\n') }
-      : { id: '', name: '', role: '', period: '', tasksText: '' }
+      : { id: '', name: '', role: '', period: '', type: 'work', tasksText: '' }
   );
 
   const set = (k, v) => setFields((f) => ({ ...f, [k]: v }));
 
   const handleSave = () => {
     const tasks = fields.tasksText.split('\n').map((t) => t.trim()).filter(Boolean);
-    onSave({ id: fields.id || makeId(fields.name), name: fields.name, role: fields.role, period: fields.period, tasks });
+    onSave({ id: fields.id || makeId(fields.name), name: fields.name, role: fields.role, period: fields.period, type: fields.type, tasks });
   };
 
   return (
     <>
       <div className="admin-editor-header">
-        <h2 className="admin-editor-title">{isNew ? 'New Company' : `Edit: ${item.name}`}</h2>
+        <h2 className="admin-editor-title">{isNew ? 'New Career' : `Edit: ${item.name}`}</h2>
       </div>
       <div className="admin-fields">
         <div className="admin-field">
-          <label>Company Name</label>
+          <label>Name</label>
           <input className="admin-input" value={fields.name} onChange={(e) => set('name', e.target.value)} />
+        </div>
+        <div className="admin-field">
+          <label>Type</label>
+          <select className="admin-input" value={fields.type} onChange={(e) => set('type', e.target.value)}>
+            <option value="work">Work</option>
+            <option value="lab">Lab</option>
+            <option value="club">Club</option>
+          </select>
         </div>
         <div className="admin-field">
           <label>Role</label>
