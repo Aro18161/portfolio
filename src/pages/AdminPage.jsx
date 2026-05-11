@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Link } from 'react-router-dom';
 import { store } from '../data/store';
+import { supabase } from '../lib/supabase';
 import '../styles/admin.css';
 
 /* ── password ──────────────────────────────────────────────── */
@@ -186,8 +187,53 @@ function ContentEditor({ section, item, onSave, onCancel, saving }) {
     if (section.type === 'project') return { id: '', title: '', year: '', tags: '', thumbnail: '', content: '' };
     return { id: '', title: '', date: '', tags: '', content: '' };
   });
+  const [uploading, setUploading] = useState(false);
+  const textareaRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const cursorRef = useRef({ start: 0, end: 0 });
 
   const set = (k, v) => setFields((f) => ({ ...f, [k]: v }));
+
+  const saveCursor = () => {
+    const ta = textareaRef.current;
+    if (ta) cursorRef.current = { start: ta.selectionStart, end: ta.selectionEnd };
+  };
+
+  const insertAtCursor = (text) => {
+    const { start, end } = cursorRef.current;
+    const content = fields.content || '';
+    const next = content.slice(0, start) + text + content.slice(end);
+    set('content', next);
+    setTimeout(() => {
+      if (textareaRef.current) {
+        const pos = start + text.length;
+        textareaRef.current.selectionStart = pos;
+        textareaRef.current.selectionEnd = pos;
+        textareaRef.current.focus();
+      }
+    }, 0);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const path = `portfolio/${filename}`;
+      const { error } = await supabase.storage.from('images').upload(path, file);
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(path);
+      const altText = file.name.replace(/\.[^.]+$/, '');
+      insertAtCursor(`![${altText}](${publicUrl})`);
+    } catch (err) {
+      alert('Upload failed: ' + err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSave = () => {
     const tagArr = fields.tags.split(',').map((t) => t.trim()).filter(Boolean);
@@ -228,10 +274,27 @@ function ContentEditor({ section, item, onSave, onCancel, saving }) {
         )}
       </div>
 
-      <p className="admin-split-label" style={{ marginBottom: 8 }}>Content (Markdown) — live preview</p>
+      <div className="admin-editor-toolbar">
+        <p className="admin-split-label">Content (Markdown) — live preview</p>
+        <div>
+          <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
+          <button className="admin-btn small" type="button" disabled={uploading || saving} onClick={() => fileInputRef.current?.click()}>
+            {uploading ? 'Uploading…' : '+ Image'}
+          </button>
+        </div>
+      </div>
+
       <div className="admin-split">
         <div className="admin-editor-pane">
-          <textarea className="admin-textarea" value={fields.content || ''} onChange={(e) => set('content', e.target.value)} spellCheck={false} />
+          <textarea
+            ref={textareaRef}
+            className="admin-textarea"
+            value={fields.content || ''}
+            onChange={(e) => set('content', e.target.value)}
+            onMouseUp={saveCursor}
+            onKeyUp={saveCursor}
+            spellCheck={false}
+          />
         </div>
         <div className="admin-preview-pane">
           <div className="admin-preview-scroll">

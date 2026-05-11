@@ -332,6 +332,17 @@
   font-size: 12px;
 }
 
+.admin-editor-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.admin-editor-toolbar .admin-split-label {
+  margin-bottom: 0;
+}
+
 .admin-split {
   display: grid;
   grid-template-columns: 1fr 1fr;
