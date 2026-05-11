@@ -474,6 +474,56 @@
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
+/* ── Export Zone ──────────────────────────────────────────── */
+.admin-export-zone {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.admin-export-title {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+  margin-bottom: 16px;
+}
+
+.admin-export-row {
+  display: flex;
+  gap: 16px;
+}
+
+.admin-export-action {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 3px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-export-desc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+
+.admin-export-desc code {
+  font-family: 'Courier New', monospace;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.admin-export-status {
+  margin-top: 14px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
 /* ── Danger Zone ──────────────────────────────────────────── */
 .admin-danger-zone {
   margin-top: 48px;

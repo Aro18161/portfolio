@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Link } from 'react-router-dom';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 import { store } from '../data/store';
 import { supabase } from '../lib/supabase';
 import '../styles/admin.css';
@@ -372,6 +374,118 @@ function CompanyEditor({ item, onSave, onCancel, saving }) {
   );
 }
 
+/* ── Export helpers ────────────────────────────────────────── */
+const FOLDER_MAP = {
+  engineeringProjects: 'engineering-projects',
+  blogPosts:           'blog-posts',
+  companies:           'career',
+  designProjects:      'design-projects',
+  essays:              'ideas',
+  articles:            'articles',
+};
+
+function itemToMarkdown(item, type) {
+  if (type === 'company') {
+    const tasks = (item.tasks || []).map((t) => `- ${t}`).join('\n');
+    return `# ${item.name}\n\n**Role:** ${item.role || ''}\n**Period:** ${item.period || ''}\n**Type:** ${item.type || ''}\n\n## Tasks\n\n${tasks}\n`;
+  }
+  const meta = [
+    `title: "${(item.title || '').replace(/"/g, '\\"')}"`,
+    item.year  ? `year: "${item.year}"` : null,
+    item.date  ? `date: "${item.date}"` : null,
+    item.tags?.length ? `tags: [${item.tags.map((t) => `"${t}"`).join(', ')}]` : null,
+    item.thumbnail ? `thumbnail: "${item.thumbnail}"` : null,
+  ].filter(Boolean).join('\n');
+  return `---\n${meta}\n---\n\n${item.content || ''}\n`;
+}
+
+/* ── Export Panel ──────────────────────────────────────────── */
+function ExportPanel() {
+  const [status, setStatus] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const setMsg = (msg) => { setStatus(msg); };
+
+  const exportJSON = async () => {
+    setBusy(true);
+    setMsg('Collecting data…');
+    try {
+      const all = {};
+      for (const s of SECTIONS) {
+        all[s.key] = await store.get(s.key);
+      }
+      const blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
+      saveAs(blob, `portfolio-backup-${new Date().toISOString().slice(0, 10)}.json`);
+      setMsg('JSON exported');
+    } catch (e) {
+      setMsg('Error: ' + e.message);
+    } finally {
+      setBusy(false);
+      setTimeout(() => setMsg(''), 2500);
+    }
+  };
+
+  const exportZIP = async () => {
+    setBusy(true);
+    try {
+      const zip = new JSZip();
+
+      /* markdown files */
+      setMsg('Collecting markdown…');
+      for (const s of SECTIONS) {
+        const items = await store.get(s.key);
+        const folder = zip.folder(FOLDER_MAP[s.key]);
+        for (const item of items) {
+          const md = itemToMarkdown(item, s.type);
+          folder.file(`${item.id || makeId(item.title || item.name)}.md`, md);
+        }
+      }
+
+      /* images from Supabase Storage */
+      setMsg('Downloading images…');
+      const { data: files, error } = await supabase.storage.from('images').list('portfolio', { limit: 500 });
+      if (!error && files?.length) {
+        const imgFolder = zip.folder('images');
+        for (const file of files) {
+          try {
+            const { data: blob } = await supabase.storage.from('images').download(`portfolio/${file.name}`);
+            if (blob) imgFolder.file(file.name, blob);
+          } catch (_) { /* skip failed downloads */ }
+        }
+      }
+
+      setMsg('Building ZIP…');
+      const blob = await zip.generateAsync({ type: 'blob' }, (meta) => {
+        setMsg(`Building ZIP… ${meta.percent.toFixed(0)}%`);
+      });
+      saveAs(blob, `portfolio-export-${new Date().toISOString().slice(0, 10)}.zip`);
+      setMsg('ZIP exported');
+    } catch (e) {
+      setMsg('Error: ' + e.message);
+    } finally {
+      setBusy(false);
+      setTimeout(() => setMsg(''), 2500);
+    }
+  };
+
+  return (
+    <div className="admin-export-zone">
+      <p className="admin-export-title">Export</p>
+      <div className="admin-export-row">
+        <div className="admin-export-action">
+          <p className="admin-export-desc">All content as <code>.md</code> files + uploaded images, bundled into a ZIP.</p>
+          <button className="admin-btn small" onClick={exportZIP} disabled={busy}>Download ZIP</button>
+        </div>
+        <div className="admin-export-action">
+          <p className="admin-export-desc">Full data snapshot as <code>.json</code> — can be used to restore later.</p>
+          <button className="admin-btn small" onClick={exportJSON} disabled={busy}>Download JSON</button>
+        </div>
+      </div>
+      {status && <p className="admin-export-status">{status}</p>}
+    </div>
+  );
+}
+
 /* ── Admin Shell ───────────────────────────────────────────── */
 export default function AdminPage() {
   const [authed, setAuthed]           = useState(() => sessionStorage.getItem('admin_auth') === '1');
@@ -454,6 +568,7 @@ export default function AdminPage() {
         {view === 'dashboard' && (
           <>
             <Dashboard onSelect={openSection} />
+            <ExportPanel />
             <div className="admin-danger-zone">
               <p className="admin-danger-title">Danger Zone</p>
               <button
